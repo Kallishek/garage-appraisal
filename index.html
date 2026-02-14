@@ -124,18 +124,18 @@ function clearSignature() {
 
 function collectData() {
   const data = {
-    date: date.value,
-    brand: brand.value,
-    model: model.value,
-    reg: registration.value,
-    colour: colour.value,
-    mileage: mileage.value,
-    source: source.value,
-    keys: keys.value,
-    tracker: tracker.value,
-    notes: notes.value,
-    appraiser: appraiser.value,
-    total: total.innerText,
+    date: document.getElementById('date').value,
+    brand: document.getElementById('brand').value,
+    model: document.getElementById('model').value,
+    reg: document.getElementById('registration').value,
+    colour: document.getElementById('colour').value,
+    mileage: document.getElementById('mileage').value,
+    source: document.getElementById('source').value,
+    keys: document.getElementById('keys').value,
+    tracker: document.getElementById('tracker').value,
+    notes: document.getElementById('notes').value,
+    appraiser: document.getElementById('appraiser').value,
+    total: document.getElementById('total').innerText,
     signature: canvas.toDataURL()
   };
 
