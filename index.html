@@ -67,157 +67,160 @@
 
 <script>
 
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('date').value = today;
+window.onload = function() {
 
-const container = document.getElementById('damageContainer');
-for (let i = 1; i <= 6; i++) {
-  container.innerHTML += `
-    <input id="damage${i}" placeholder="Item ${i} description">
-    <input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
-  `;
-}
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
 
-function calculateTotal() {
-  let total = 0;
+  const container = document.getElementById('damageContainer');
   for (let i = 1; i <= 6; i++) {
-    total += parseFloat(document.getElementById('cost' + i).value) || 0;
+    container.innerHTML += `
+      <input id="damage${i}" placeholder="Item ${i} description">
+      <input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
+    `;
   }
-  document.getElementById('total').innerText = total.toFixed(2);
-}
 
-// Signature
-const canvas = document.getElementById('signaturePad');
-const ctx = canvas.getContext('2d');
-let drawing = false;
+  const canvas = document.getElementById('signaturePad');
+  const ctx = canvas.getContext('2d');
+  let drawing = false;
 
-canvas.width = canvas.offsetWidth;
-canvas.height = 120;
+  canvas.width = canvas.offsetWidth;
+  canvas.height = 120;
 
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('touchstart', startDraw);
-canvas.addEventListener('touchend', endDraw);
-canvas.addEventListener('touchmove', draw);
+  canvas.addEventListener('mousedown', startDraw);
+  canvas.addEventListener('mouseup', endDraw);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('touchstart', startDraw);
+  canvas.addEventListener('touchend', endDraw);
+  canvas.addEventListener('touchmove', draw);
 
-function startDraw(e) { drawing = true; draw(e); }
-function endDraw() { drawing = false; ctx.beginPath(); }
+  function startDraw(e) { drawing = true; draw(e); }
+  function endDraw() { drawing = false; ctx.beginPath(); }
 
-function draw(e) {
-  if (!drawing) return;
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineTo(x, y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-}
-
-function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-}
-
-function collectData() {
-  const data = {
-    date: document.getElementById('date').value,
-    brand: document.getElementById('brand').value,
-    model: document.getElementById('model').value,
-    reg: document.getElementById('registration').value,
-    colour: document.getElementById('colour').value,
-    mileage: document.getElementById('mileage').value,
-    source: document.getElementById('source').value,
-    keys: document.getElementById('keys').value,
-    tracker: document.getElementById('tracker').value,
-    notes: document.getElementById('notes').value,
-    appraiser: document.getElementById('appraiser').value,
-    total: document.getElementById('total').innerText,
-    signature: canvas.toDataURL()
-  };
-
-  let damages = [];
-  for (let i = 1; i <= 6; i++) {
-    const d = document.getElementById('damage' + i).value;
-    const c = document.getElementById('cost' + i).value;
-    if (d || c) damages.push(${d} - £${c || 0});
+  function draw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
   }
-  data.damages = damages;
-  return data;
-}
 
-function quickEmail() {
-  const d = collectData();
-  const subject = Appraisal Report - ${d.brand} ${d.model} (${d.reg});
+  window.clearSignature = function() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
-  const body =
-    Date: ${d.date}%0D%0A +
-    Brand: ${d.brand}%0D%0A +
-    Model: ${d.model}%0D%0A +
-    Registration: ${d.reg}%0D%0A +
-    Colour: ${d.colour}%0D%0A +
-    Mileage: ${d.mileage}%0D%0A +
-    Source: ${d.source}%0D%0A +
-    Keys: ${d.keys}%0D%0A +
-    Tracker: ${d.tracker}%0D%0A%0D%0A +
-    DAMAGE:%0D%0A +
-    d.damages.join('%0D%0A') + %0D%0A%0D%0A +
-    TOTAL: £${d.total}%0D%0A%0D%0A +
-    Appraised by: ${d.appraiser};
+  window.calculateTotal = function() {
+    let total = 0;
+    for (let i = 1; i <= 6; i++) {
+      total += parseFloat(document.getElementById('cost' + i).value) || 0;
+    }
+    document.getElementById('total').innerText = total.toFixed(2);
+  }
 
-  window.location.href = mailto:?subject=${subject}&body=${body};
-}
+  function collectData() {
+    const data = {
+      date: document.getElementById('date').value,
+      brand: document.getElementById('brand').value,
+      model: document.getElementById('model').value,
+      reg: document.getElementById('registration').value,
+      colour: document.getElementById('colour').value,
+      mileage: document.getElementById('mileage').value,
+      source: document.getElementById('source').value,
+      keys: document.getElementById('keys').value,
+      tracker: document.getElementById('tracker').value,
+      notes: document.getElementById('notes').value,
+      appraiser: document.getElementById('appraiser').value,
+      total: document.getElementById('total').innerText,
+      signature: canvas.toDataURL()
+    };
 
-function generatePDF() {
-  const d = collectData();
-  const win = window.open('', '_blank');
+    let damages = [];
+    for (let i = 1; i <= 6; i++) {
+      const d = document.getElementById('damage' + i).value;
+      const c = document.getElementById('cost' + i).value;
+      if (d || c) damages.push(${d} - £${c || 0});
+    }
+    data.damages = damages;
+    return data;
+  }
 
-  win.document.write(`
-    <html>
-    <head>
-      <title>Vehicle Appraisal Report</title>
-      <style>
-        body { font-family: Arial; padding:40px; }
-        h1 { margin-bottom:20px; }
-        .section { margin-top:20px; }
-        .total { font-size:18px; font-weight:bold; margin-top:15px; }
-        img { margin-top:10px; }
-      </style>
-    </head>
-    <body>
-      <h1>Vehicle Appraisal Report</h1>
-      <div class="section">
-        <strong>Date:</strong> ${d.date}<br>
-        <strong>Brand:</strong> ${d.brand}<br>
-        <strong>Model:</strong> ${d.model}<br>
-        <strong>Registration:</strong> ${d.reg}<br>
-        <strong>Colour:</strong> ${d.colour}<br>
-        <strong>Mileage:</strong> ${d.mileage}<br>
-        <strong>Source:</strong> ${d.source}<br>
-        <strong>Keys:</strong> ${d.keys}<br>
-        <strong>Tracker:</strong> ${d.tracker}
-      </div>
-      <div class="section">
-        <h3>Damage Breakdown</h3>
-        ${d.damages.map(x => <div>${x}</div>).join('')}
-        <div class="total">Total: £${d.total}</div>
-      </div>
-      <div class="section">
-        <h3>Notes</h3>
-        <div>${d.notes}</div>
-      </div>
-      <div class="section">
-        <h3>Signature</h3>
-        <img src="${d.signature}" width="250" />
-        <div>Signed by: ${d.appraiser}</div>
-      </div>
-      <script>window.print()<\/script>
-    </body>
-    </html>
-  `);
+  window.quickEmail = function() {
+    const d = collectData();
+    const subject = Appraisal Report - ${d.brand} ${d.model} (${d.reg});
+
+    const body =
+      Date: ${d.date}%0D%0A +
+      Brand: ${d.brand}%0D%0A +
+      Model: ${d.model}%0D%0A +
+      Registration: ${d.reg}%0D%0A +
+      Colour: ${d.colour}%0D%0A +
+      Mileage: ${d.mileage}%0D%0A +
+      Source: ${d.source}%0D%0A +
+      Keys: ${d.keys}%0D%0A +
+      Tracker: ${d.tracker}%0D%0A%0D%0A +
+      DAMAGE:%0D%0A +
+      d.damages.join('%0D%0A') + %0D%0A%0D%0A +
+      TOTAL: £${d.total}%0D%0A%0D%0A +
+      Appraised by: ${d.appraiser};
+
+    window.location.href = mailto:?subject=${subject}&body=${body};
+  }
+
+  window.generatePDF = function() {
+    const d = collectData();
+    const win = window.open('', '_blank');
+
+    win.document.write(`
+      <html>
+      <head>
+        <title>Vehicle Appraisal Report</title>
+        <style>
+          body { font-family: Arial; padding:40px; }
+          h1 { margin-bottom:20px; }
+          .section { margin-top:20px; }
+          .total { font-size:18px; font-weight:bold; margin-top:15px; }
+          img { margin-top:10px; }
+        </style>
+      </head>
+      <body>
+        <h1>Vehicle Appraisal Report</h1>
+        <div class="section">
+          <strong>Date:</strong> ${d.date}<br>
+          <strong>Brand:</strong> ${d.brand}<br>
+          <strong>Model:</strong> ${d.model}<br>
+          <strong>Registration:</strong> ${d.reg}<br>
+          <strong>Colour:</strong> ${d.colour}<br>
+          <strong>Mileage:</strong> ${d.mileage}<br>
+          <strong>Source:</strong> ${d.source}<br>
+          <strong>Keys:</strong> ${d.keys}<br>
+          <strong>Tracker:</strong> ${d.tracker}
+        </div>
+        <div class="section">
+          <h3>Damage Breakdown</h3>
+          ${d.damages.map(x => <div>${x}</div>).join('')}
+          <div class="total">Total: £${d.total}</div>
+        </div>
+        <div class="section">
+          <h3>Notes</h3>
+          <div>${d.notes}</div>
+        </div>
+        <div class="section">
+          <h3>Signature</h3>
+          <img src="${d.signature}" width="250" />
+          <div>Signed by: ${d.appraiser}</div>
+        </div>
+        <script>window.print()<\/script>
+      </body>
+      </html>
+    `);
+  }
+
 }
 
 </script>
