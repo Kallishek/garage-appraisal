@@ -22,9 +22,11 @@
 
   <div class="section">
     <h2>Vehicle Info</h2>
+    <input id="date" type="date" placeholder="Date">
     <input id="brand" placeholder="Brand">
     <input id="model" placeholder="Model">
     <input id="registration" placeholder="Registration">
+    <input id="colour" placeholder="Colour">
     <input id="mileage" placeholder="Mileage">
     <input id="source" placeholder="Source (P/X, Buy-In, etc)">
     <input id="keys" type="number" placeholder="Number of Keys">
@@ -72,9 +74,11 @@ function calculateTotal() {
 }
 
 function sendEmail() {
+  const date = document.getElementById('date').value;
   const brand = document.getElementById('brand').value;
   const model = document.getElementById('model').value;
   const reg = document.getElementById('registration').value;
+  const colour = document.getElementById('colour').value;
   const mileage = document.getElementById('mileage').value;
   const source = document.getElementById('source').value;
   const keys = document.getElementById('keys').value;
@@ -96,9 +100,11 @@ function sendEmail() {
 
   const body =
     "VEHICLE INFORMATION" + "%0D%0A" +
+    "Date: " + date + "%0D%0A" +
     "Brand: " + brand + "%0D%0A" +
     "Model: " + model + "%0D%0A" +
     "Registration: " + reg + "%0D%0A" +
+    "Colour: " + colour + "%0D%0A" +
     "Mileage: " + mileage + "%0D%0A" +
     "Source: " + source + "%0D%0A" +
     "Keys: " + keys + "%0D%0A" +
