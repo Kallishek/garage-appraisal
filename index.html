@@ -61,17 +61,15 @@
     <input id="appraiser" placeholder="Name">
   </div>
 
-  <button onclick="sendEmail()">Send Email Report</button>
-  <button onclick="printReport()">Print Report</button>
+  <button onclick="quickEmail()">Quick Email</button>
+  <button onclick="generatePDF()">Generate Signed PDF</button>
 </div>
 
 <script>
 
-// Auto set today's date
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('date').value = today;
 
-// Create 6 damage rows
 const container = document.getElementById('damageContainer');
 for (let i = 1; i <= 6; i++) {
   container.innerHTML += `
@@ -88,46 +86,13 @@ function calculateTotal() {
   document.getElementById('total').innerText = total.toFixed(2);
 }
 
-function resetForm() {
-  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
-  document.getElementById('date').value = today;
-  document.getElementById('total').innerText = '0.00';
-  clearSignature();
-}
-
-// -------- Signature Pad --------
+// Signature
 const canvas = document.getElementById('signaturePad');
 const ctx = canvas.getContext('2d');
 let drawing = false;
 
 canvas.width = canvas.offsetWidth;
 canvas.height = 120;
-
-function startDraw(e) {
-  drawing = true;
-  draw(e);
-}
-
-function endDraw() {
-  drawing = false;
-  ctx.beginPath();
-}
-
-function draw(e) {
-  if (!drawing) return;
-  e.preventDefault();
-
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineTo(x, y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-}
 
 canvas.addEventListener('mousedown', startDraw);
 canvas.addEventListener('mouseup', endDraw);
@@ -136,60 +101,123 @@ canvas.addEventListener('touchstart', startDraw);
 canvas.addEventListener('touchend', endDraw);
 canvas.addEventListener('touchmove', draw);
 
+function startDraw(e) { drawing = true; draw(e); }
+function endDraw() { drawing = false; ctx.beginPath(); }
+
+function draw(e) {
+  if (!drawing) return;
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+}
+
 function clearSignature() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-// -------- Email --------
-function sendEmail() {
-  const date = document.getElementById('date').value;
-  const brand = document.getElementById('brand').value;
-  const model = document.getElementById('model').value;
-  const reg = document.getElementById('registration').value;
-  const colour = document.getElementById('colour').value;
-  const mileage = document.getElementById('mileage').value;
-  const source = document.getElementById('source').value;
-  const keys = document.getElementById('keys').value;
-  const tracker = document.getElementById('tracker').value;
-  const notes = document.getElementById('notes').value;
-  const appraiser = document.getElementById('appraiser').value;
-  const total = document.getElementById('total').innerText;
+function collectData() {
+  const data = {
+    date: date.value,
+    brand: brand.value,
+    model: model.value,
+    reg: registration.value,
+    colour: colour.value,
+    mileage: mileage.value,
+    source: source.value,
+    keys: keys.value,
+    tracker: tracker.value,
+    notes: notes.value,
+    appraiser: appraiser.value,
+    total: total.innerText,
+    signature: canvas.toDataURL()
+  };
 
-  let damageSection = "";
+  let damages = [];
   for (let i = 1; i <= 6; i++) {
     const d = document.getElementById('damage' + i).value;
     const c = document.getElementById('cost' + i).value;
-    if (d || c) {
-      damageSection += d + " - £" + (c || 0) + "%0D%0A";
-    }
+    if (d || c) damages.push(${d} - £${c || 0});
   }
-
-  const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
-
-  const body =
-    "VEHICLE INFORMATION" + "%0D%0A" +
-    "Date: " + date + "%0D%0A" +
-    "Brand: " + brand + "%0D%0A" +
-    "Model: " + model + "%0D%0A" +
-    "Registration: " + reg + "%0D%0A" +
-    "Colour: " + colour + "%0D%0A" +
-    "Mileage: " + mileage + "%0D%0A" +
-    "Source: " + source + "%0D%0A" +
-    "Keys: " + keys + "%0D%0A" +
-    "Tracker: " + tracker + "%0D%0A%0D%0A" +
-    "DAMAGE BREAKDOWN" + "%0D%0A" +
-    damageSection + "%0D%0A" +
-    "TOTAL ESTIMATED COST: £" + total + "%0D%0A%0D%0A" +
-    "NOTES:" + "%0D%0A" + notes + "%0D%0A%0D%0A" +
-    "Signed by: " + appraiser;
-
-  window.location.href = "mailto:?subject=" + subject + "&body=" + body;
-
-  setTimeout(resetForm, 500);
+  data.damages = damages;
+  return data;
 }
 
-function printReport() {
-  window.print();
+function quickEmail() {
+  const d = collectData();
+  const subject = Appraisal Report - ${d.brand} ${d.model} (${d.reg});
+
+  const body =
+    Date: ${d.date}%0D%0A +
+    Brand: ${d.brand}%0D%0A +
+    Model: ${d.model}%0D%0A +
+    Registration: ${d.reg}%0D%0A +
+    Colour: ${d.colour}%0D%0A +
+    Mileage: ${d.mileage}%0D%0A +
+    Source: ${d.source}%0D%0A +
+    Keys: ${d.keys}%0D%0A +
+    Tracker: ${d.tracker}%0D%0A%0D%0A +
+    DAMAGE:%0D%0A +
+    d.damages.join('%0D%0A') + %0D%0A%0D%0A +
+    TOTAL: £${d.total}%0D%0A%0D%0A +
+    Appraised by: ${d.appraiser};
+
+  window.location.href = mailto:?subject=${subject}&body=${body};
+}
+
+function generatePDF() {
+  const d = collectData();
+  const win = window.open('', '_blank');
+
+  win.document.write(`
+    <html>
+    <head>
+      <title>Vehicle Appraisal Report</title>
+      <style>
+        body { font-family: Arial; padding:40px; }
+        h1 { margin-bottom:20px; }
+        .section { margin-top:20px; }
+        .total { font-size:18px; font-weight:bold; margin-top:15px; }
+        img { margin-top:10px; }
+      </style>
+    </head>
+    <body>
+      <h1>Vehicle Appraisal Report</h1>
+      <div class="section">
+        <strong>Date:</strong> ${d.date}<br>
+        <strong>Brand:</strong> ${d.brand}<br>
+        <strong>Model:</strong> ${d.model}<br>
+        <strong>Registration:</strong> ${d.reg}<br>
+        <strong>Colour:</strong> ${d.colour}<br>
+        <strong>Mileage:</strong> ${d.mileage}<br>
+        <strong>Source:</strong> ${d.source}<br>
+        <strong>Keys:</strong> ${d.keys}<br>
+        <strong>Tracker:</strong> ${d.tracker}
+      </div>
+      <div class="section">
+        <h3>Damage Breakdown</h3>
+        ${d.damages.map(x => <div>${x}</div>).join('')}
+        <div class="total">Total: £${d.total}</div>
+      </div>
+      <div class="section">
+        <h3>Notes</h3>
+        <div>${d.notes}</div>
+      </div>
+      <div class="section">
+        <h3>Signature</h3>
+        <img src="${d.signature}" width="250" />
+        <div>Signed by: ${d.appraiser}</div>
+      </div>
+      <script>window.print()<\/script>
+    </body>
+    </html>
+  `);
 }
 
 </script>
