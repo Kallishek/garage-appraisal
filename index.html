@@ -26,20 +26,17 @@
     <input id="model" placeholder="Model">
     <input id="registration" placeholder="Registration">
     <input id="mileage" placeholder="Mileage">
+    <input id="source" placeholder="Source (P/X, Buy-In, etc)">
+    <input id="keys" type="number" placeholder="Number of Keys">
+    <input id="tracker" placeholder="Tracker Number">
   </div>
 
   <div class="section">
     <h2>Damage Items (£)</h2>
-    <input id="damage1" placeholder="Item 1 description">
-    <input id="cost1" type="number" placeholder="Cost 1" oninput="calculateTotal()">
 
-    <input id="damage2" placeholder="Item 2 description">
-    <input id="cost2" type="number" placeholder="Cost 2" oninput="calculateTotal()">
+    <div id="damageContainer"></div>
 
-    <input id="damage3" placeholder="Item 3 description">
-    <input id="cost3" type="number" placeholder="Cost 3" oninput="calculateTotal()">
-
-    <div class="total">Total: £<span id="total">0</span></div>
+    <div class="total">Total: £<span id="total">0.00</span></div>
   </div>
 
   <div class="section">
@@ -56,11 +53,21 @@
 </div>
 
 <script>
+
+// Create 6 damage rows dynamically
+const container = document.getElementById('damageContainer');
+for (let i = 1; i <= 6; i++) {
+  container.innerHTML += `
+    <input id="damage${i}" placeholder="Item ${i} description">
+    <input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
+  `;
+}
+
 function calculateTotal() {
-  const c1 = parseFloat(document.getElementById('cost1').value) || 0;
-  const c2 = parseFloat(document.getElementById('cost2').value) || 0;
-  const c3 = parseFloat(document.getElementById('cost3').value) || 0;
-  const total = c1 + c2 + c3;
+  let total = 0;
+  for (let i = 1; i <= 6; i++) {
+    total += parseFloat(document.getElementById('cost' + i).value) || 0;
+  }
   document.getElementById('total').innerText = total.toFixed(2);
 }
 
@@ -69,17 +76,21 @@ function sendEmail() {
   const model = document.getElementById('model').value;
   const reg = document.getElementById('registration').value;
   const mileage = document.getElementById('mileage').value;
-
-  const d1 = document.getElementById('damage1').value;
-  const c1 = document.getElementById('cost1').value;
-  const d2 = document.getElementById('damage2').value;
-  const c2 = document.getElementById('cost2').value;
-  const d3 = document.getElementById('damage3').value;
-  const c3 = document.getElementById('cost3').value;
-
+  const source = document.getElementById('source').value;
+  const keys = document.getElementById('keys').value;
+  const tracker = document.getElementById('tracker').value;
   const notes = document.getElementById('notes').value;
   const appraiser = document.getElementById('appraiser').value;
   const total = document.getElementById('total').innerText;
+
+  let damageSection = "";
+  for (let i = 1; i <= 6; i++) {
+    const d = document.getElementById('damage' + i).value;
+    const c = document.getElementById('cost' + i).value;
+    if (d || c) {
+      damageSection += d + " - £" + (c || 0) + "%0D%0A";
+    }
+  }
 
   const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
 
@@ -88,17 +99,19 @@ function sendEmail() {
     "Brand: " + brand + "%0D%0A" +
     "Model: " + model + "%0D%0A" +
     "Registration: " + reg + "%0D%0A" +
-    "Mileage: " + mileage + "%0D%0A%0D%0A" +
+    "Mileage: " + mileage + "%0D%0A" +
+    "Source: " + source + "%0D%0A" +
+    "Keys: " + keys + "%0D%0A" +
+    "Tracker: " + tracker + "%0D%0A%0D%0A" +
     "DAMAGE BREAKDOWN" + "%0D%0A" +
-    d1 + " - £" + c1 + "%0D%0A" +
-    d2 + " - £" + c2 + "%0D%0A" +
-    d3 + " - £" + c3 + "%0D%0A%0D%0A" +
+    damageSection + "%0D%0A" +
     "TOTAL ESTIMATED COST: £" + total + "%0D%0A%0D%0A" +
     "NOTES:" + "%0D%0A" + notes + "%0D%0A%0D%0A" +
     "Appraised by: " + appraiser;
 
   window.location.href = "mailto:?subject=" + subject + "&body=" + body;
 }
+
 </script>
 
 </body>
