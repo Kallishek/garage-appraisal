@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Garage Appraisal</title>
+  <style>
+    body { font-family: Arial; padding: 20px; background:#f5f5f5; }
+    input, textarea { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
+    button { padding:10px 15px; margin:6px 5px 6px 0; border:none; border-radius:8px; background:black; color:white; cursor:pointer; }
+    h2 { margin-top:30px; }
+    .card { background:white; padding:20px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h1>Vehicle Appraisal</h1>
+
+  <input id="brand" placeholder="Brand">
+  <input id="model" placeholder="Model">
+  <input id="registration" placeholder="Registration">
+  <input id="mileage" placeholder="Mileage">
+  <textarea id="damage" placeholder="Damage notes"></textarea>
+  <input id="cost" placeholder="Estimated cost">
+
+  <button onclick="sendEmail()">Send Email</button>
+</div>
+
+<script>
+function sendEmail() {
+  const brand = document.getElementById('brand').value;
+  const model = document.getElementById('model').value;
+  const reg = document.getElementById('registration').value;
+  const mileage = document.getElementById('mileage').value;
+  const damage = document.getElementById('damage').value;
+  const cost = document.getElementById('cost').value;
+
+  const body =
+    "Brand: " + brand + "%0D%0A" +
+    "Model: " + model + "%0D%0A" +
+    "Registration: " + reg + "%0D%0A" +
+    "Mileage: " + mileage + "%0D%0A" +
+    "Damage: " + damage + "%0D%0A" +
+    "Estimated cost: " + cost;
+
+  window.location.href = "mailto:?subject=Vehicle Appraisal " + reg + "&body=" + body;
+}
+</script>
+
+</body>
+</html>
