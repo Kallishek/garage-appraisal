@@ -194,8 +194,19 @@ function damageMapPlace(e) {
     const container = document.getElementById('damageMapContainer');
     const rect = container.getBoundingClientRect();
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+    let clientX, clientY;
+
+    // 📱 Pokud je to touch (iPhone)
+    if (e.touches && e.touches.length > 0) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = e.clientX;
+      clientY = e.clientY;
+    }
+
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
 
     const mark = document.createElement('div');
     mark.innerText = damageMapCurrent;
@@ -228,7 +239,7 @@ function damageMapPlace(e) {
       mark.style.color = 'white';
     }
 
-   mark.onclick = function(event) {
+    mark.onclick = function(event) {
       event.stopPropagation();
       mark.remove();
     };
@@ -239,7 +250,6 @@ function damageMapPlace(e) {
     console.log("Damage map error:", err);
   }
 }
-
 function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
   container.querySelectorAll('div').forEach(el => el.remove());
