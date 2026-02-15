@@ -40,26 +40,6 @@
   </div>
 
   <div class="section">
-  <h2>Body Damage Map</h2>
-
-  <div style="margin-bottom:10px;">
-    <button type="button" onclick="damageMapSet('D')">Dent (D)</button>
-    <button type="button" onclick="damageMapSet('C')">Chip (C)</button>
-    <button type="button" onclick="damageMapSet('S')">Scratch (S)</button>
-    <button type="button" onclick="damageMapClear()">Clear Marks</button>
-  </div>
-
-  <div id="damageMapContainer" 
-     style="position:relative; width:100%; max-width:400px;">
-
-  <img src="Unknown.jpg" 
-       style="width:100%; display:block;">
-  
-  </div>
-
-  </div>  
-  
-  <div class="section">
     <h2>Damage Items (£)</h2>
     <div id="damageContainer"></div>
     <div class="total">Total: £<span id="total">0.00</span></div>
@@ -182,68 +162,8 @@ function sendEmail() {
     if (d || c) {
       damageSection += d + " - £" + (c || 0) + "%0D%0A";
     }
-  / ===== SAFE BODY DAMAGE MAP SYSTEM =====
-
-let damageMapCurrent = 'D';
-
-function damageMapSet(type) {
-  damageMapCurrent = type;
-}
-
-const damageContainer = document.getElementById('damageMapContainer');
-
-damageContainer.addEventListener('click', function(e) {
-  try {
-    const rect = damageContainer.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const mark = document.createElement('div');
-    mark.innerText = damageMapCurrent;
-    mark.style.position = 'absolute';
-    mark.style.left = x + 'px';
-    mark.style.top = y + 'px';
-    mark.style.transform = 'translate(-50%, -50%)';
-    mark.style.borderRadius = '50%';
-    mark.style.width = '24px';
-    mark.style.height = '24px';
-    mark.style.display = 'flex';
-    mark.style.alignItems = 'center';
-    mark.style.justifyContent = 'center';
-    mark.style.fontSize = '12px';
-    mark.style.fontWeight = 'bold';
-    mark.style.cursor = 'pointer';
-
-    if (damageMapCurrent === 'D') {
-      mark.style.background = 'red';
-      mark.style.color = 'white';
-    }
-
-    if (damageMapCurrent === 'C') {
-      mark.style.background = 'yellow';
-      mark.style.color = 'black';
-    }
-
-    if (damageMapCurrent === 'S') {
-      mark.style.background = 'blue';
-      mark.style.color = 'white';
-    }
-
-    mark.addEventListener('click', function(ev) {
-      ev.stopPropagation();
-      mark.remove();
-    });
-
-    damageContainer.appendChild(mark);
-
-  } catch (err) {
-    console.log("Damage map error:", err);
   }
-});
 
-function damageMapClear() {
-  damageContainer.querySelectorAll('div').forEach(el => el.remove());
-}
   const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
 
   const body =
