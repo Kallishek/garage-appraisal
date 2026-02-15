@@ -40,6 +40,22 @@
   </div>
 
   <div class="section">
+  <h2>Body Damage Map</h2>
+
+  <div style="margin-bottom:10px;">
+    <button type="button" onclick="damageMapSet('D')">Dent (D)</button>
+    <button type="button" onclick="damageMapSet('C')">Chip (C)</button>
+    <button type="button" onclick="damageMapSet('S')">Scratch (S)</button>
+    <button type="button" onclick="damageMapClear()">Clear Marks</button>
+  </div>
+
+  <div id="damageMapContainer" 
+       style="position:relative; width:100%; max-width:400px; height:500px; border:1px solid #ccc; border-radius:12px; background:#fafafa;"
+       onclick="damageMapPlace(event)">
+  </div>
+</div>  
+  
+  <div class="section">
     <h2>Damage Items (£)</h2>
     <div id="damageContainer"></div>
     <div class="total">Total: £<span id="total">0.00</span></div>
@@ -191,7 +207,49 @@ function sendEmail() {
 function printReport() {
   window.print();
 }
+// ===== SAFE BODY DAMAGE MAP SYSTEM =====
 
+let damageMapCurrent = 'D';
+
+function damageMapSet(type) {
+  damageMapCurrent = type;
+}
+
+function damageMapPlace(e) {
+  try {
+    const container = document.getElementById('damageMapContainer');
+    const rect = container.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const mark = document.createElement('div');
+    mark.innerText = damageMapCurrent;
+    mark.style.position = 'absolute';
+    mark.style.left = x + 'px';
+    mark.style.top = y + 'px';
+    mark.style.transform = 'translate(-50%, -50%)';
+    mark.style.background = 'red';
+    mark.style.color = 'white';
+    mark.style.borderRadius = '50%';
+    mark.style.width = '22px';
+    mark.style.height = '22px';
+    mark.style.display = 'flex';
+    mark.style.alignItems = 'center';
+    mark.style.justifyContent = 'center';
+    mark.style.fontSize = '12px';
+    mark.style.fontWeight = 'bold';
+
+    container.appendChild(mark);
+  } catch (err) {
+    console.log("Damage map error:", err);
+  }
+}
+
+function damageMapClear() {
+  const container = document.getElementById('damageMapContainer');
+  container.innerHTML = '';
+}  
 </script>
 
 </body>
