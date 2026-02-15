@@ -50,11 +50,12 @@
   </div>
 
   <div id="damageMapContainer" 
-     style="position:relative; width:100%; max-width:400px;"
-     onclick="damageMapPlace(event)">
+     style="position:relative; width:100%; max-width:400px;">
 
   <img src="Unknown.jpg" 
        style="width:100%; display:block;">
+  
+  </div>
 
   </div>  
   
@@ -181,7 +182,7 @@ function sendEmail() {
     if (d || c) {
       damageSection += d + " - £" + (c || 0) + "%0D%0A";
     }
-  // ===== SAFE BODY DAMAGE MAP SYSTEM =====
+  / ===== SAFE BODY DAMAGE MAP SYSTEM =====
 
 let damageMapCurrent = 'D';
 
@@ -189,24 +190,13 @@ function damageMapSet(type) {
   damageMapCurrent = type;
 }
 
-function damageMapPlace(e) {
+const damageContainer = document.getElementById('damageMapContainer');
+
+damageContainer.addEventListener('click', function(e) {
   try {
-    const container = document.getElementById('damageMapContainer');
-    const rect = container.getBoundingClientRect();
-
-    let clientX, clientY;
-
-    // 📱 Pokud je to touch (iPhone)
-    if (e.touches && e.touches.length > 0) {
-      clientX = e.touches[0].clientX;
-      clientY = e.touches[0].clientY;
-    } else {
-      clientX = e.clientX;
-      clientY = e.clientY;
-    }
-
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
+    const rect = damageContainer.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
 
     const mark = document.createElement('div');
     mark.innerText = damageMapCurrent;
@@ -239,23 +229,21 @@ function damageMapPlace(e) {
       mark.style.color = 'white';
     }
 
-    mark.onclick = function(event) {
-      event.stopPropagation();
+    mark.addEventListener('click', function(ev) {
+      ev.stopPropagation();
       mark.remove();
-    };
+    });
 
-    container.appendChild(mark);
+    damageContainer.appendChild(mark);
 
   } catch (err) {
     console.log("Damage map error:", err);
   }
-}
-function damageMapClear() {
-  const container = document.getElementById('damageMapContainer');
-  container.querySelectorAll('div').forEach(el => el.remove());
-}
-  }
+});
 
+function damageMapClear() {
+  damageContainer.querySelectorAll('div').forEach(el => el.remove());
+}
   const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
 
   const body =
