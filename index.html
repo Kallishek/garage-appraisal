@@ -82,8 +82,9 @@
 
   <button onclick="sendEmail()">Send Email Report</button>
   <button onclick="printReport()">Print Report</button>
+  <button onclick="saveAppraisal()">Save Appraisal</button>  
   <button onclick="document.getElementById('loadFile').click()">Load Appraisal</button>
-   <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadAppraisal(event)">
+  <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadAppraisal(event)">
   </div>
 
 <script>
@@ -327,8 +328,61 @@ function loadAppraisal(event) {
 
   reader.readAsText(file);
 }
-  
-}</script>
+
+  // ===== SAFE SAVE SYSTEM =====
+
+function saveAppraisal() {
+  try {
+    const data = {};
+
+    data.date = document.getElementById('date').value;
+    data.brand = document.getElementById('brand').value;
+    data.model = document.getElementById('model').value;
+    data.registration = document.getElementById('registration').value;
+    data.colour = document.getElementById('colour').value;
+    data.mileage = document.getElementById('mileage').value;
+    data.source = document.getElementById('source').value;
+    data.keys = document.getElementById('keys').value;
+    data.tracker = document.getElementById('tracker').value;
+    data.notes = document.getElementById('notes').value;
+    data.appraiser = document.getElementById('appraiser').value;
+
+    // Damage items
+    data.damageItems = [];
+    for (let i = 1; i <= 6; i++) {
+      data.damageItems.push({
+        desc: document.getElementById('damage' + i).value,
+        cost: document.getElementById('cost' + i).value
+      });
+    }
+
+    // Signature
+    data.signature = canvas.toDataURL();
+
+    // Map marks
+    const container = document.getElementById('damageMapContainer');
+    data.mapMarks = [];
+    container.querySelectorAll('div').forEach(mark => {
+      data.mapMarks.push({
+        text: mark.innerText,
+        left: mark.style.left,
+        top: mark.style.top
+      });
+    });
+
+    const blob = new Blob([JSON.stringify(data)], { type: "application/json" });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+
+    const fileName = (data.registration || "appraisal") + ".json";
+    a.download = fileName;
+    a.click();
+
+  } catch (err) {
+    console.log("Save error:", err);
+  }
+}
+  </script>
 
 </body>
 </html>
