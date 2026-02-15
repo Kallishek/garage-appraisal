@@ -181,6 +181,71 @@ function sendEmail() {
     if (d || c) {
       damageSection += d + " - £" + (c || 0) + "%0D%0A";
     }
+  // ===== SAFE BODY DAMAGE MAP SYSTEM =====
+
+let damageMapCurrent = 'D';
+
+function damageMapSet(type) {
+  damageMapCurrent = type;
+}
+
+function damageMapPlace(e) {
+  try {
+    const container = document.getElementById('damageMapContainer');
+    const rect = container.getBoundingClientRect();
+
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const mark = document.createElement('div');
+    mark.innerText = damageMapCurrent;
+    mark.style.position = 'absolute';
+    mark.style.left = x + 'px';
+    mark.style.top = y + 'px';
+    mark.style.transform = 'translate(-50%, -50%)';
+    mark.style.borderRadius = '50%';
+    mark.style.width = '24px';
+    mark.style.height = '24px';
+    mark.style.display = 'flex';
+    mark.style.alignItems = 'center';
+    mark.style.justifyContent = 'center';
+    mark.style.fontSize = '12px';
+    mark.style.fontWeight = 'bold';
+    mark.style.cursor = 'pointer';
+
+    // 🎨 Barevné rozlišení
+    if (damageMapCurrent === 'D') {
+      mark.style.background = 'red';
+      mark.style.color = 'white';
+    }
+
+    if (damageMapCurrent === 'C') {
+      mark.style.background = 'yellow';
+      mark.style.color = 'black';
+    }
+
+    if (damageMapCurrent === 'S') {
+      mark.style.background = 'blue';
+      mark.style.color = 'white';
+    }
+
+    // 🗑 Kliknutí smaže jen ten konkrétní bod
+    mark.onclick = function(event) {
+      event.stopPropagation();
+      mark.remove();
+    };
+
+    container.appendChild(mark);
+
+  } catch (err) {
+    console.log("Damage map error:", err);
+  }
+}
+
+function damageMapClear() {
+  const container = document.getElementById('damageMapContainer');
+  container.querySelectorAll('div').forEach(el => el.remove());
+}
   }
 
   const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
@@ -210,49 +275,7 @@ function sendEmail() {
 function printReport() {
   window.print();
 }
-// ===== SAFE BODY DAMAGE MAP SYSTEM =====
 
-let damageMapCurrent = 'D';
-
-function damageMapSet(type) {
-  damageMapCurrent = type;
-}
-
-function damageMapPlace(e) {
-  try {
-    const container = document.getElementById('damageMapContainer');
-    const rect = container.getBoundingClientRect();
-
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const mark = document.createElement('div');
-    mark.innerText = damageMapCurrent;
-    mark.style.position = 'absolute';
-    mark.style.left = x + 'px';
-    mark.style.top = y + 'px';
-    mark.style.transform = 'translate(-50%, -50%)';
-    mark.style.background = 'red';
-    mark.style.color = 'white';
-    mark.style.borderRadius = '50%';
-    mark.style.width = '22px';
-    mark.style.height = '22px';
-    mark.style.display = 'flex';
-    mark.style.alignItems = 'center';
-    mark.style.justifyContent = 'center';
-    mark.style.fontSize = '12px';
-    mark.style.fontWeight = 'bold';
-
-    container.appendChild(mark);
-  } catch (err) {
-    console.log("Damage map error:", err);
-  }
-}
-
-function damageMapClear() {
-  const container = document.getElementById('damageMapContainer');
-  container.innerHTML = '';
-}  
 </script>
 
 </body>
