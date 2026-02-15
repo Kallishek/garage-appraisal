@@ -61,206 +61,135 @@
     <input id="appraiser" placeholder="Name">
   </div>
 
-  <button onclick="quickEmail()">Quick Email</button>
-  <button onclick="generatePDF()">Generate Signed PDF</button>
+  <button onclick="sendEmail()">Send Email Report</button>
+  <button onclick="printReport()">Print Report</button>
 </div>
 
 <script>
 
-window.onload = function() {
+// Auto set today's date
+const today = new Date().toISOString().split('T')[0];
+document.getElementById('date').value = today;
 
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('date').value = today;
+// Create 6 damage rows
+const container = document.getElementById('damageContainer');
+for (let i = 1; i <= 6; i++) {
+  container.innerHTML += `
+    <input id="damage${i}" placeholder="Item ${i} description">
+    <input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
+  `;
+}
 
-  const container = document.getElementById('damageContainer');
+function calculateTotal() {
+  let total = 0;
   for (let i = 1; i <= 6; i++) {
-    container.innerHTML += `
-      <input id="damage${i}" placeholder="Item ${i} description">
-      <input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
-    `;
+    total += parseFloat(document.getElementById('cost' + i).value) || 0;
   }
+  document.getElementById('total').innerText = total.toFixed(2);
+}
 
-  const canvas = document.getElementById('signaturePad');
-  const ctx = canvas.getContext('2d');
-  let drawing = false;
+function resetForm() {
+  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
+  document.getElementById('date').value = today;
+  document.getElementById('total').innerText = '0.00';
+  clearSignature();
+}
 
-  canvas.width = canvas.offsetWidth;
-  canvas.height = 120;
+// -------- Signature Pad --------
+const canvas = document.getElementById('signaturePad');
+const ctx = canvas.getContext('2d');
+let drawing = false;
 
-  canvas.addEventListener('mousedown', startDraw);
-  canvas.addEventListener('mouseup', endDraw);
-  canvas.addEventListener('mousemove', draw);
-  canvas.addEventListener('touchstart', startDraw);
-  canvas.addEventListener('touchend', endDraw);
-  canvas.addEventListener('touchmove', draw);
+canvas.width = canvas.offsetWidth;
+canvas.height = 120;
 
-  function startDraw(e) { drawing = true; draw(e); }
-  function endDraw() { drawing = false; ctx.beginPath(); }
+function startDraw(e) {
+  drawing = true;
+  draw(e);
+}
 
-  function draw(e) {
-    if (!drawing) return;
-    e.preventDefault();
-    const rect = canvas.getBoundingClientRect();
-    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-  }
+function endDraw() {
+  drawing = false;
+  ctx.beginPath();
+}
 
-  window.clearSignature = function() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-  }
+function draw(e) {
+  if (!drawing) return;
+  e.preventDefault();
 
-  window.calculateTotal = function() {
-    let total = 0;
-    for (let i = 1; i <= 6; i++) {
-      total += parseFloat(document.getElementById('cost' + i).value) || 0;
+  const rect = canvas.getBoundingClientRect();
+  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+  ctx.lineWidth = 2;
+  ctx.lineCap = 'round';
+  ctx.lineTo(x, y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+}
+
+canvas.addEventListener('mousedown', startDraw);
+canvas.addEventListener('mouseup', endDraw);
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('touchstart', startDraw);
+canvas.addEventListener('touchend', endDraw);
+canvas.addEventListener('touchmove', draw);
+
+function clearSignature() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+// -------- Email --------
+function sendEmail() {
+  const date = document.getElementById('date').value;
+  const brand = document.getElementById('brand').value;
+  const model = document.getElementById('model').value;
+  const reg = document.getElementById('registration').value;
+  const colour = document.getElementById('colour').value;
+  const mileage = document.getElementById('mileage').value;
+  const source = document.getElementById('source').value;
+  const keys = document.getElementById('keys').value;
+  const tracker = document.getElementById('tracker').value;
+  const notes = document.getElementById('notes').value;
+  const appraiser = document.getElementById('appraiser').value;
+  const total = document.getElementById('total').innerText;
+
+  let damageSection = "";
+  for (let i = 1; i <= 6; i++) {
+    const d = document.getElementById('damage' + i).value;
+    const c = document.getElementById('cost' + i).value;
+    if (d || c) {
+      damageSection += d + " - £" + (c || 0) + "%0D%0A";
     }
-    document.getElementById('total').innerText = total.toFixed(2);
   }
 
-  function collectData() {
-    const data = {
-      date: document.getElementById('date').value,
-      brand: document.getElementById('brand').value,
-      model: document.getElementById('model').value,
-      reg: document.getElementById('registration').value,
-      colour: document.getElementById('colour').value,
-      mileage: document.getElementById('mileage').value,
-      source: document.getElementById('source').value,
-      keys: document.getElementById('keys').value,
-      tracker: document.getElementById('tracker').value,
-      notes: document.getElementById('notes').value,
-      appraiser: document.getElementById('appraiser').value,
-      total: document.getElementById('total').innerText,
-      signature: canvas.toDataURL()
-    };
+  const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
 
-    let damages = [];
-    for (let i = 1; i <= 6; i++) {
-      const d = document.getElementById('damage' + i).value;
-      const c = document.getElementById('cost' + i).value;
-      if (d || c) damages.push(${d} - £${c || 0});
-    }
-    data.damages = damages;
-    return data;
-  }
+  const body =
+    "VEHICLE INFORMATION" + "%0D%0A" +
+    "Date: " + date + "%0D%0A" +
+    "Brand: " + brand + "%0D%0A" +
+    "Model: " + model + "%0D%0A" +
+    "Registration: " + reg + "%0D%0A" +
+    "Colour: " + colour + "%0D%0A" +
+    "Mileage: " + mileage + "%0D%0A" +
+    "Source: " + source + "%0D%0A" +
+    "Keys: " + keys + "%0D%0A" +
+    "Tracker: " + tracker + "%0D%0A%0D%0A" +
+    "DAMAGE BREAKDOWN" + "%0D%0A" +
+    damageSection + "%0D%0A" +
+    "TOTAL ESTIMATED COST: £" + total + "%0D%0A%0D%0A" +
+    "NOTES:" + "%0D%0A" + notes + "%0D%0A%0D%0A" +
+    "Signed by: " + appraiser;
 
-  window.quickEmail = function() {
-    const d = collectData();
-    const subject = Appraisal Report - ${d.brand} ${d.model} (${d.reg});
+  window.location.href = "mailto:?subject=" + subject + "&body=" + body;
 
-    const body =
-      Date: ${d.date}%0D%0A +
-      Brand: ${d.brand}%0D%0A +
-      Model: ${d.model}%0D%0A +
-      Registration: ${d.reg}%0D%0A +
-      Colour: ${d.colour}%0D%0A +
-      Mileage: ${d.mileage}%0D%0A +
-      Source: ${d.source}%0D%0A +
-      Keys: ${d.keys}%0D%0A +
-      Tracker: ${d.tracker}%0D%0A%0D%0A +
-      DAMAGE:%0D%0A +
-      d.damages.join('%0D%0A') + %0D%0A%0D%0A +
-      TOTAL: £${d.total}%0D%0A%0D%0A +
-      Appraised by: ${d.appraiser};
-
-    window.location.href = mailto:?subject=${subject}&body=${body};
-  }
-
-  window.generatePDF = function() {
-    const d = collectData();
-    const win = window.open('', '_blank');
-
-    win.document.write(`
-      <html>
-      <head>
-        <title>Vehicle Appraisal Report</title>
-        <style>
-          body { font-family: Arial; padding:40px; }
-          h1 { margin-bottom:20px; }
-          .section { margin-top:20px; }
-          .total { font-size:18px; font-weight:bold; margin-top:15px; }
-          img { margin-top:10px; }
-        </style>
-      </head>
-      <body>
-        <h1>Vehicle Appraisal Report</h1>
-        <div class="section">
-          <strong>Date:</strong> ${d.date}<br>
-          <strong>Brand:</strong> ${d.brand}<br>
-          <strong>Model:</strong> ${d.model}<br>
-          <strong>Registration:</strong> ${d.reg}<br>
-          <strong>Colour:</strong> ${d.colour}<br>
-          <strong>Mileage:</strong> ${d.mileage}<br>
-          <strong>Source:</strong> ${d.source}<br>
-          <strong>Keys:</strong> ${d.keys}<br>
-          <strong>Tracker:</strong> ${d.tracker}
-        </div>
-        <div class="section">
-          <h3>Damage Breakdown</h3>
-          ${d.damages.map(x => <div>${x}</div>).join('')}
-          <div class="total">Total: £${d.total}</div>
-        </div>
-        <div class="section">
-          <h3>Notes</h3>
-          <div>${d.notes}</div>
-        </div>
-        <div class="section">
-          <h3>Signature</h3>
-          <img src="${d.signature}" width="250" />
-          <div>Signed by: ${d.appraiser}</div>
-        </div>
-        <script>window.print()<\/script>
-      </body>
-      </html>
-    `);
-  }
-
+  setTimeout(resetForm, 500);
 }
 
-// -------- BODY DAMAGE MAP --------
-
-let currentMarkType = 'D';
-
-function setMarkType(type) {
-  currentMarkType = type;
-}
-
-function placeMark(event) {
-  const container = document.getElementById('carMapContainer');
-  const layer = document.getElementById('markLayer');
-  const rect = container.getBoundingClientRect();
-
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-
-  const mark = document.createElement('div');
-  mark.innerText = currentMarkType;
-  mark.style.position = 'absolute';
-  mark.style.left = x + 'px';
-  mark.style.top = y + 'px';
-  mark.style.transform = 'translate(-50%, -50%)';
-  mark.style.background = 'red';
-  mark.style.color = 'white';
-  mark.style.borderRadius = '50%';
-  mark.style.width = '22px';
-  mark.style.height = '22px';
-  mark.style.display = 'flex';
-  mark.style.alignItems = 'center';
-  mark.style.justifyContent = 'center';
-  mark.style.fontSize = '12px';
-  mark.style.fontWeight = 'bold';
-
-  layer.appendChild(mark);
-}
-
-function clearMarks() {
-  document.getElementById('markLayer').innerHTML = '';
+function printReport() {
+  window.print();
 }
 
 </script>
