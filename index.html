@@ -49,7 +49,7 @@
     <button type="button" onclick="damageMapClear()">Clear Marks</button>
   </div>
 
-  <<div id="damageMapContainer" 
+  <div id="damageMapContainer" 
      style="position:relative; width:100%; max-width:400px;"
      onclick="damageMapPlace(event)">
 
@@ -255,6 +255,7 @@ function damageMapPlace(e) {
 function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
   container.innerHTML = '';
+}
 
 // ===== SAFE LOAD SYSTEM =====
 
