@@ -213,7 +213,6 @@ function damageMapPlace(e) {
     mark.style.fontWeight = 'bold';
     mark.style.cursor = 'pointer';
 
-    // 🎨 Barevné rozlišení
     if (damageMapCurrent === 'D') {
       mark.style.background = 'red';
       mark.style.color = 'white';
@@ -229,8 +228,7 @@ function damageMapPlace(e) {
       mark.style.color = 'white';
     }
 
-    // 🗑 Kliknutí smaže jen ten konkrétní bod
-    mark.onclick = function(event) {
+   mark.onclick = function(event) {
       event.stopPropagation();
       mark.remove();
     };
