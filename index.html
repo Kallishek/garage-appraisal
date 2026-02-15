@@ -82,7 +82,9 @@
 
   <button onclick="sendEmail()">Send Email Report</button>
   <button onclick="printReport()">Print Report</button>
-</div>
+  <button onclick="document.getElementById('loadFile').click()">Load Appraisal</button>
+   <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadAppraisal(event)">
+  </div>
 
 <script>
 
@@ -252,6 +254,80 @@ function damageMapPlace(e) {
 function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
   container.innerHTML = '';
+
+// ===== SAFE LOAD SYSTEM =====
+
+function loadAppraisal(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    const data = JSON.parse(e.target.result);
+
+    // Vehicle info
+    document.getElementById('date').value = data.date || '';
+    document.getElementById('brand').value = data.brand || '';
+    document.getElementById('model').value = data.model || '';
+    document.getElementById('registration').value = data.registration || '';
+    document.getElementById('colour').value = data.colour || '';
+    document.getElementById('mileage').value = data.mileage || '';
+    document.getElementById('source').value = data.source || '';
+    document.getElementById('keys').value = data.keys || '';
+    document.getElementById('tracker').value = data.tracker || '';
+    document.getElementById('notes').value = data.notes || '';
+    document.getElementById('appraiser').value = data.appraiser || '';
+
+    // Damage items
+    if (data.damageItems) {
+      data.damageItems.forEach((item, index) => {
+        document.getElementById('damage' + (index + 1)).value = item.desc;
+        document.getElementById('cost' + (index + 1)).value = item.cost;
+      });
+      calculateTotal();
+    }
+
+    // Restore signature
+    if (data.signature) {
+      const img = new Image();
+      img.onload = function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(img, 0, 0);
+      };
+      img.src = data.signature;
+    }
+
+    // Restore map marks
+    damageMapClear();
+
+    if (data.mapMarks) {
+      const container = document.getElementById('damageMapContainer');
+      data.mapMarks.forEach(markData => {
+        const mark = document.createElement('div');
+        mark.innerText = markData.text;
+        mark.style.position = 'absolute';
+        mark.style.left = markData.left;
+        mark.style.top = markData.top;
+        mark.style.transform = 'translate(-50%, -50%)';
+        mark.style.background = 'red';
+        mark.style.color = 'white';
+        mark.style.borderRadius = '50%';
+        mark.style.width = '22px';
+        mark.style.height = '22px';
+        mark.style.display = 'flex';
+        mark.style.alignItems = 'center';
+        mark.style.justifyContent = 'center';
+        mark.style.fontSize = '12px';
+        mark.style.fontWeight = 'bold';
+        container.appendChild(mark);
+      });
+    }
+  };
+
+  reader.readAsText(file);
+}
+  
 }</script>
 
 </body>
