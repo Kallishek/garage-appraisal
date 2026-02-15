@@ -353,29 +353,35 @@ function loadAppraisal(event) {
     }
 
     // Restore map marks
-    const container = document.getElementById('damageMapContainer');
-    container.innerHTML = '';
-    if (data.mapMarks) {
-      data.mapMarks.forEach(markData => {
-        const mark = document.createElement('div');
-        mark.innerText = markData.text;
-        mark.style.position = 'absolute';
-        mark.style.left = markData.left;
-        mark.style.top = markData.top;
-        mark.style.transform = 'translate(-50%, -50%)';
-        mark.style.background = 'red';
-        mark.style.color = 'white';
-        mark.style.borderRadius = '50%';
-        mark.style.width = '22px';
-        mark.style.height = '22px';
-        mark.style.display = 'flex';
-        mark.style.alignItems = 'center';
-        mark.style.justifyContent = 'center';
-        mark.style.fontSize = '12px';
-        mark.style.fontWeight = 'bold';
-        container.appendChild(mark);
-      });
-    }
+const container = document.getElementById('damageMapContainer');
+
+// smaž jen existující body (div marky)
+container.querySelectorAll('div').forEach(el => el.remove());
+
+if (data.mapMarks) {
+  data.mapMarks.forEach(markData => {
+    const mark = document.createElement('div');
+    mark.innerText = markData.text;
+    mark.style.position = 'absolute';
+    mark.style.left = markData.left;
+    mark.style.top = markData.top;
+    mark.style.transform = 'translate(-50%, -50%)';
+    mark.style.background = 'red';
+    mark.style.color = 'white';
+    mark.style.borderRadius = '50%';
+    mark.style.width = '22px';
+    mark.style.height = '22px';
+    mark.style.display = 'flex';
+    mark.style.alignItems = 'center';
+    mark.style.justifyContent = 'center';
+    mark.style.fontSize = '12px';
+    mark.style.fontWeight = 'bold';
+
+    container.appendChild(mark);
+  });
+}
+Sent
+Write to Daniela Puskarova
   };
 
   reader.readAsText(file);
