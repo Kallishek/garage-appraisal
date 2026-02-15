@@ -50,13 +50,10 @@
   </div>
 
   <div id="damageMapContainer" 
-     style="position:relative; width:100%; max-width:400px;"
-     onclick="damageMapPlace(event)">
-
-  <img src="Unknown.jpg" 
-       style="width:100%; display:block;">
-
-</div> 
+       style="position:relative; width:100%; max-width:400px; height:500px; border:1px solid #ccc; border-radius:12px; background:#fafafa;"
+       onclick="damageMapPlace(event)">
+  </div>
+ 
   <div class="section">
     <h2>Damage Items (£)</h2>
     <div id="damageContainer"></div>
@@ -81,10 +78,7 @@
 
   <button onclick="sendEmail()">Send Email Report</button>
   <button onclick="printReport()">Print Report</button>
-  <button onclick="saveAppraisal()">Save Appraisal</button>
-  <button onclick="document.getElementById('loadFile').click()">Load Appraisal</button>
-  <input type="file" id="loadFile" accept=".json" style="display:none" onchange="loadAppraisal(event)">
-  </div>
+</div>
 
 <script>
 
@@ -254,12 +248,7 @@ function damageMapPlace(e) {
 function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
   container.innerHTML = '';
-
-}
-
- reader.readAsText(file);
-}
-  </script>
+}</script>
 
 </body>
 </html>
