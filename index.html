@@ -230,8 +230,11 @@ function damageMapPlace(e) {
 
     let color = 'red';
 
-    if (damageMapCurrent === 'W') color = 'blue';
-    if (damageMapCurrent === 'R') color = 'orange';
+    if (damageMapCurrent === 'D') color = '#e53935';   // red
+    if (damageMapCurrent === 'C') color = '#43a047';   // green
+    if (damageMapCurrent === 'S') color = '#fdd835';   // yellow
+    if (damageMapCurrent === 'W') color = '#1e88e5';   // blue
+    if (damageMapCurrent === 'R') color = '#fb8c00';   // orange
 
     const mark = document.createElement('div');
     mark.innerText = damageMapCurrent;
@@ -255,7 +258,7 @@ function damageMapPlace(e) {
     console.log("Damage map error:", err);
   }
 }
-function damageMapClear() {
+  function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
   container.querySelectorAll('div').forEach(mark => mark.remove());
 }
