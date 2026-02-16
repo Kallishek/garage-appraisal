@@ -253,8 +253,9 @@ function damageMapPlace(e) {
 
 function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
-  container.innerHTML = '';
-}</script>
+  container.querySelectorAll('div').forEach(mark => mark.remove());
+}
+</script>
 
 </body>
 </html>
