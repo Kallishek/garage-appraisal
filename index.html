@@ -221,42 +221,43 @@ function damageMapSet(type) {
 }
 
 function damageMapPlace(e) {
-  const container = document.getElementById('damageMapContainer');
-  const rect = container.getBoundingClientRect();
+  try {
+    const container = document.getElementById('damageMapContainer');
+    const rect = container.getBoundingClientRect();
 
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-  const mark = document.createElement('div');
-  mark.innerText = damageMapCurrent;
+    const mark = document.createElement('div');
+    mark.innerText = damageMapCurrent;
 
-  mark.style.position = 'absolute';
-  mark.style.left = x + '%';
-  mark.style.top = y + '%';
-  mark.style.transform = 'translate(-50%, -50%)';
-  mark.style.width = '22px';
-  mark.style.height = '22px';
-  mark.style.borderRadius = '50%';
-  mark.style.display = 'flex';
-  mark.style.alignItems = 'center';
-  mark.style.justifyContent = 'center';
-  mark.style.fontSize = '12px';
-  mark.style.fontWeight = 'bold';
-  mark.style.color = 'white';
+    mark.style.position = 'absolute';
+    mark.style.left = x + '%';
+    mark.style.top = y + '%';
+    mark.style.transform = 'translate(-50%, -50%)';
+    mark.style.width = '22px';
+    mark.style.height = '22px';
+    mark.style.borderRadius = '50%';
+    mark.style.display = 'flex';
+    mark.style.alignItems = 'center';
+    mark.style.justifyContent = 'center';
+    mark.style.fontSize = '12px';
+    mark.style.fontWeight = 'bold';
+    mark.style.color = 'white';
 
-  // 🎨 barvy podle typu
-  if (damageMapCurrent === 'C') mark.style.background = 'green';
-  else if (damageMapCurrent === 'D') mark.style.background = 'red';
-  else if (damageMapCurrent === 'S') mark.style.background = 'orange';
-  else if (damageMapCurrent === 'W') mark.style.background = 'blue';
-  else if (damageMapCurrent === 'R') mark.style.background = 'purple';
+    // 🎨 Barvy podle typu
+    if (damageMapCurrent === 'C') mark.style.background = 'green';
+    else if (damageMapCurrent === 'D') mark.style.background = 'red';
+    else if (damageMapCurrent === 'S') mark.style.background = 'orange';
+    else if (damageMapCurrent === 'W') mark.style.background = 'blue';
+    else if (damageMapCurrent === 'R') mark.style.background = 'purple';
 
-  container.appendChild(mark);
-  
+    container.appendChild(mark);
+
   } catch (err) {
     console.log("Damage map error:", err);
   }
-}
+ }
   function damageMapClear() {
   const container = document.getElementById('damageMapContainer');
   container.querySelectorAll('div').forEach(mark => mark.remove());
