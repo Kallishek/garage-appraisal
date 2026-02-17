@@ -49,11 +49,6 @@
     margin: 4px 0;
   }
 
-  /* ===== zabrání rozsekání sekcí ===== */
-  .section {
-    page-break-inside: avoid;
-  }
-
   /* ===== Page break ===== */
   .page-break {
     page-break-before: always;
@@ -103,19 +98,40 @@
   <div class="page-break"></div>
   
   <div class="section">
-    <h2>Body Damage Map</h2>
-    <div class="print-flex">
+  <h2>Body Damage Map</h2>
 
+  <!-- Tlačítka (zůstanou nahoře, ale při tisku zmizí) -->
   <div style="margin-bottom:10px;">
     <button type="button" onclick="damageMapSet('D')">Dent (D)</button>
     <button type="button" onclick="damageMapSet('C')">Chip (C)</button>
     <button type="button" onclick="damageMapSet('S')">Scratch (S)</button>
     <button type="button" onclick="damageMapSet('W')">Wheel (W)</button>
     <button type="button" onclick="damageMapSet('R')">Repair (R)</button>
-    <button type="button" onclick="damageMapClear()">Clear Marks</button>  
+    <button type="button" onclick="damageMapClear()">Clear Marks</button>
   </div>
+
+  <!-- TADY začíná správný print-flex -->
+  <div class="print-flex">
+
+    <!-- LEVÁ STRANA -->
+    <div>
+      <div id="damageMapContainer"
+           style="position:relative; width:100%; max-width:400px;"
+           onclick="damageMapPlace(event)">
+        <img src="Unknown.jpg" style="width:100%; display:block;">
+      </div>
+    </div>
+
+    <!-- PRAVÁ STRANA -->
+    <div>
+      <h2>Damage Items (£)</h2>
+      <div id="damageContainer"></div>
+      <div class="total">Total: £<span id="total">0.00</span></div>
+    </div>
+
   </div>
-  
+
+</div>  
 
   <div id="damageMapContainer"
      style="position:relative; width:100%; max-width:400px;"
