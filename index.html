@@ -296,8 +296,8 @@ function damageMapClear(){
 document.querySelectorAll('#damageMapContainer div')
 .forEach(el=>el.remove());
 }
+// -------- Email --------
 function sendEmail() {
-
   const date = document.getElementById('date').value;
   const brand = document.getElementById('brand').value;
   const model = document.getElementById('model').value;
@@ -316,41 +316,86 @@ function sendEmail() {
     const d = document.getElementById('damage' + i).value;
     const c = document.getElementById('cost' + i).value;
     if (d || c) {
-      damageSection += d + " - £" + (c || 0) + "\n";
+      damageSection += d + " - £" + (c || 0) + "%0D%0A";
     }
   }
 
-  const subject = Appraisal Report - ${brand} ${model} (${reg});
+  const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
 
-  const body = `
-VEHICLE INFORMATION
+  const body =
+    "VEHICLE INFORMATION" + "%0D%0A" +
+    "Date: " + date + "%0D%0A" +
+    "Brand: " + brand + "%0D%0A" +
+    "Model: " + model + "%0D%0A" +
+    "Registration: " + reg + "%0D%0A" +
+    "Colour: " + colour + "%0D%0A" +
+    "Mileage: " + mileage + "%0D%0A" +
+    "Source: " + source + "%0D%0A" +
+    "Keys: " + keys + "%0D%0A" +
+    "Tracker: " + tracker + "%0D%0A%0D%0A" +
+    "DAMAGE BREAKDOWN" + "%0D%0A" +
+    damageSection + "%0D%0A" +
+    "TOTAL ESTIMATED COST: £" + total + "%0D%0A%0D%0A" +
+    "NOTES:" + "%0D%0A" + notes + "%0D%0A%0D%0A" +
+    "Signed by: " + appraiser;
 
-Date: ${date}
-Brand: ${brand}
-Model: ${model}
-Registration: ${reg}
-Colour: ${colour}
-Mileage: ${mileage}
-Source: ${source}
-Keys: ${keys}
-Tracker: ${tracker}
+  window.location.href = "mailto:?subject=" + subject + "&body=" + body;
 
-DAMAGE BREAKDOWN
-${damageSection}
+  setTimeout(resetForm, 500);
+}
 
-TOTAL ESTIMATED COST: £${total}
+function printReport() {
+  window.print();
+}
+// ===== SAFE BODY DAMAGE MAP SYSTEM =====
 
-NOTES:
-${notes}
+let damageMapCurrent = 'D';
 
-Signed by: ${appraiser}
-`;
+function damageMapSet(type) {
+  damageMapCurrent = type;
+}
 
-  const mailtoLink =
-    "mailto:?subject=" + encodeURIComponent(subject) +
-    "&body=" + encodeURIComponent(body);
+function damageMapPlace(e) {
+  try {
+    const container = document.getElementById('damageMapContainer');
+    const rect = container.getBoundingClientRect();
 
-  window.location.href = mailtoLink;
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    const mark = document.createElement('div');
+    mark.innerText = damageMapCurrent;
+
+    mark.style.position = 'absolute';
+    mark.style.left = x + '%';
+    mark.style.top = y + '%';
+    mark.style.transform = 'translate(-50%, -50%)';
+    mark.style.width = '22px';
+    mark.style.height = '22px';
+    mark.style.borderRadius = '50%';
+    mark.style.display = 'flex';
+    mark.style.alignItems = 'center';
+    mark.style.justifyContent = 'center';
+    mark.style.fontSize = '12px';
+    mark.style.fontWeight = 'bold';
+    mark.style.color = 'white';
+
+    // 🎨 Barvy podle typu
+    if (damageMapCurrent === 'C') mark.style.background = 'green';
+    else if (damageMapCurrent === 'D') mark.style.background = 'red';
+    else if (damageMapCurrent === 'S') mark.style.background = 'orange';
+    else if (damageMapCurrent === 'W') mark.style.background = 'blue';
+    else if (damageMapCurrent === 'R') mark.style.background = 'purple';
+
+    container.appendChild(mark);
+
+  } catch (err) {
+    console.log("Damage map error:", err);
+  }
+ }
+  function damageMapClear() {
+  const container = document.getElementById('damageMapContainer');
+  container.querySelectorAll('div').forEach(mark => mark.remove());
 }
 </script>
 
