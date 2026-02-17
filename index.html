@@ -1,349 +1,303 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BMW MINI SELECT Appraisal form</title>
-  <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, Arial; padding: 20px; background:#f2f2f7; }
-    input, textarea { width:100%; padding:12px; margin:8px 0; border-radius:10px; border:1px solid #ccc; font-size:16px; }
-    button { padding:12px 16px; margin:8px 6px 8px 0; border:none; border-radius:10px; background:black; color:white; font-size:15px; cursor:pointer; }
-    h1 { margin-bottom:10px; }
-    h2 { margin-top:25px; }
-    .card { background:white; padding:20px; border-radius:16px; box-shadow:0 8px 20px rgba(0,0,0,0.08); }
-    .total { font-size:20px; font-weight:bold; margin-top:10px; }
-    .section { margin-top:25px; }
-    canvas { border:1px solid #ccc; border-radius:10px; width:100%; height:120px; touch-action:none; }
- @media print {
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BMW MINI SELECT Appraisal form</title>
+
+<style>
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Arial;
+  padding: 20px;
+  background:#f2f2f7;
+}
+
+input, textarea {
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:16px;
+}
+
+button {
+  padding:12px 16px;
+  margin:8px 6px 8px 0;
+  border:none;
+  border-radius:10px;
+  background:black;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+
+h1 { margin-bottom:10px; }
+h2 { margin-top:25px; }
+
+.card {
+  background:white;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.section { margin-top:25px; }
+
+.total {
+  font-size:20px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+canvas {
+  border:1px solid #ccc;
+  border-radius:10px;
+  width:100%;
+  height:120px;
+  touch-action:none;
+}
+
+.header-logos {
+  text-align:center;
+  margin-bottom:15px;
+}
+
+.header-logos img {
+  max-width:100%;
+  height:auto;
+}
+
+/* ===== PRINT MODE ===== */
+@media print {
 
   @page {
     size: A4;
     margin: 15mm;
   }
 
-  button {
-    display: none;
-  }
-
-  body {
-    background: white;
-  }
+  button { display:none; }
+  body { background:white; }
 
   .card {
-    box-shadow: none;
-    padding: 0;
+    box-shadow:none;
+    padding:0;
   }
 
-  .header-logos {
-    margin-bottom: 10px;
-  }
-
-  /* ===== Vehicle Info 2 sloupce ===== */
   .vehicle-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
   }
 
   .vehicle-grid input {
-    margin: 4px 0;
+    margin:4px 0;
   }
 
-  /* ===== Page break ===== */
-  .page-break {
-    page-break-before: always;
+  .section {
+    page-break-inside: avoid;
   }
 
-  /* ===== Map + Damage vedle sebe ===== */
   .print-flex {
-    display: flex;
-    gap: 20px;
-    align-items: flex-start;
+    display:flex;
+    gap:25px;
+    align-items:flex-start;
   }
 
   .print-flex > div {
-    flex: 1;
+    flex:1;
   }
 
-  }
-}  
-  </style>
+}
+</style>
 </head>
 <body>
 
 <div class="card">
 
-  <div class="header-logos">
-    <img src="Unknown-2.jpg" alt="Company Logos">
-  </div>
+<div class="header-logos">
+  <img src="Unknown-2.jpg" alt="Company Logos">
+</div>
 
-  <h1>Vehicle Appraisal form</h1>
-  <div class="section">
-    <h2>Vehicle Info</h2>
-    <div class="vehicle-grid">
-    <input id="date" type="date">
-    <input id="brand" placeholder="Brand">
-    <input id="model" placeholder="Model">
-    <input id="registration" placeholder="Registration" 
-       style="text-transform:uppercase" 
-       oninput="this.value = this.value.toUpperCase()">    
-    <input id="colour" placeholder="Colour">
-    <input id="mileage" placeholder="Mileage">
-    <input id="source" placeholder="Source (P/X, Buy-In, etc)">
-    <input id="keys" placeholder="Number of Keys">
-    <input id="tracker" placeholder="Tracker Number">
-  </div>
-  </div>
+<h1>Vehicle Appraisal form</h1>
 
-  <div class="page-break"></div>
-  
-  <div class="section">
-  <h2>Body Damage Map</h2>
+<div class="section">
+<h2>Vehicle Info</h2>
 
-  <!-- Tlačítka (zůstanou nahoře, ale při tisku zmizí) -->
-  <div style="margin-bottom:10px;">
-    <button type="button" onclick="damageMapSet('D')">Dent (D)</button>
-    <button type="button" onclick="damageMapSet('C')">Chip (C)</button>
-    <button type="button" onclick="damageMapSet('S')">Scratch (S)</button>
-    <button type="button" onclick="damageMapSet('W')">Wheel (W)</button>
-    <button type="button" onclick="damageMapSet('R')">Repair (R)</button>
-    <button type="button" onclick="damageMapClear()">Clear Marks</button>
-  </div>
+<div class="vehicle-grid">
+<input id="date" type="date">
+<input id="brand" placeholder="Brand">
+<input id="model" placeholder="Model">
+<input id="registration" placeholder="Registration"
+       style="text-transform:uppercase"
+       oninput="this.value=this.value.toUpperCase()">
+<input id="colour" placeholder="Colour">
+<input id="mileage" placeholder="Mileage">
+<input id="source" placeholder="Source (P/X, Buy-In, etc)">
+<input id="keys" placeholder="Number of Keys">
+<input id="tracker" placeholder="Tracker Number">
+</div>
+</div>
 
-  <!-- TADY začíná správný print-flex -->
-  <div class="print-flex">
 
-    <!-- LEVÁ STRANA -->
-    <div>
-      <div id="damageMapContainer"
-           style="position:relative; width:100%; max-width:400px;"
-           onclick="damageMapPlace(event)">
-        <img src="Unknown.jpg" style="width:100%; display:block;">
-      </div>
-    </div>
+<div class="section">
+<h2>Body Damage Map</h2>
 
-    <!-- PRAVÁ STRANA -->
-    <div>
-      <h2>Damage Items (£)</h2>
-      <div id="damageContainer"></div>
-      <div class="total">Total: £<span id="total">0.00</span></div>
-    </div>
+<div style="margin-bottom:10px;">
+<button type="button" onclick="damageMapSet('D')">Dent (D)</button>
+<button type="button" onclick="damageMapSet('C')">Chip (C)</button>
+<button type="button" onclick="damageMapSet('S')">Scratch (S)</button>
+<button type="button" onclick="damageMapSet('W')">Wheel (W)</button>
+<button type="button" onclick="damageMapSet('R')">Repair (R)</button>
+<button type="button" onclick="damageMapClear()">Clear Marks</button>
+</div>
 
-  </div>
+<div class="print-flex">
 
-</div>  
-
-  <div id="damageMapContainer"
-     style="position:relative; width:100%; max-width:400px;"
+<div>
+<div id="damageMapContainer"
+     style="position:relative;width:100%;max-width:400px;"
      onclick="damageMapPlace(event)">
-  <img src="Unknown.jpg" 
-       style="width:100%; display:block;">  
-  </div>
- 
-  <div class="section">
-    <h2>Damage Items (£)</h2>
-    <div id="damageContainer"></div>
-    <div class="total">Total: £<span id="total">0.00</span></div>
-  </div>
-    
-    <div class="page-break"></div>
+<img src="Unknown.jpg" style="width:100%;display:block;">
+</div>
+</div>
 
-  <div class="section">
-    <h2>Additional Notes</h2>
-    <textarea id="notes" placeholder="Extra notes"></textarea>
-  </div>
+<div>
+<h2>Damage Items (£)</h2>
+<div id="damageContainer"></div>
+<div class="total">Total: £<span id="total">0.00</span></div>
+</div>
 
-  <div class="section">
-    <h2>Digital Signature</h2>
-    <canvas id="signaturePad"></canvas>
-    <button type="button" onclick="clearSignature()">Clear Signature</button>
-  </div>
+</div>
+</div>
 
-  <div class="section">
-    <h2>Appraised By</h2>
-    <input id="appraiser" placeholder="Name">
-  </div>
 
-  <button onclick="sendEmail()">Send Email Report</button>
-  <button onclick="printReport()">Print Report</button>
+<div class="section">
+<h2>Additional Notes</h2>
+<textarea id="notes" placeholder="Extra notes"></textarea>
+</div>
+
+<div class="section">
+<h2>Digital Signature</h2>
+<canvas id="signaturePad"></canvas>
+<button type="button" onclick="clearSignature()">Clear Signature</button>
+</div>
+
+<div class="section">
+<h2>Appraised By</h2>
+<input id="appraiser" placeholder="Name">
+</div>
+
+<button onclick="sendEmail()">Send Email Report</button>
+<button onclick="printReport()">Print Report</button>
+
 </div>
 
 <script>
 
-// Auto set today's date
+// Auto date
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('date').value = today;
 
-// Create 6 damage rows
+// Damage rows
 const container = document.getElementById('damageContainer');
-for (let i = 1; i <= 6; i++) {
-  container.innerHTML += `
-    <input id="damage${i}" placeholder="Item ${i} description">
-    <input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
-  `;
+for (let i=1;i<=6;i++){
+container.innerHTML += `
+<input id="damage${i}" placeholder="Item ${i} description">
+<input id="cost${i}" type="number" placeholder="Cost ${i}" oninput="calculateTotal()">
+`;
 }
 
-function calculateTotal() {
-  let total = 0;
-  for (let i = 1; i <= 6; i++) {
-    total += parseFloat(document.getElementById('cost' + i).value) || 0;
-  }
-  document.getElementById('total').innerText = total.toFixed(2);
+function calculateTotal(){
+let total=0;
+for(let i=1;i<=6;i++){
+total += parseFloat(document.getElementById('cost'+i).value)||0;
+}
+document.getElementById('total').innerText = total.toFixed(2);
 }
 
-function resetForm() {
-  document.querySelectorAll('input, textarea').forEach(el => el.value = '');
-  document.getElementById('date').value = today;
-  document.getElementById('total').innerText = '0.00';
-  clearSignature();
-}
-
-// -------- Signature Pad --------
+// Signature
 const canvas = document.getElementById('signaturePad');
 const ctx = canvas.getContext('2d');
-let drawing = false;
+let drawing=false;
+canvas.width=canvas.offsetWidth;
+canvas.height=120;
 
-canvas.width = canvas.offsetWidth;
-canvas.height = 120;
-
-function startDraw(e) {
-  drawing = true;
-  draw(e);
+function startDraw(e){drawing=true;draw(e);}
+function endDraw(){drawing=false;ctx.beginPath();}
+function draw(e){
+if(!drawing)return;
+e.preventDefault();
+const rect=canvas.getBoundingClientRect();
+const x=(e.touches?e.touches[0].clientX:e.clientX)-rect.left;
+const y=(e.touches?e.touches[0].clientY:e.clientY)-rect.top;
+ctx.lineWidth=2;
+ctx.lineCap='round';
+ctx.lineTo(x,y);
+ctx.stroke();
+ctx.beginPath();
+ctx.moveTo(x,y);
 }
 
-function endDraw() {
-  drawing = false;
-  ctx.beginPath();
+canvas.addEventListener('mousedown',startDraw);
+canvas.addEventListener('mouseup',endDraw);
+canvas.addEventListener('mousemove',draw);
+canvas.addEventListener('touchstart',startDraw);
+canvas.addEventListener('touchend',endDraw);
+canvas.addEventListener('touchmove',draw);
+
+function clearSignature(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
 }
 
-function draw(e) {
-  if (!drawing) return;
-  e.preventDefault();
-
-  const rect = canvas.getBoundingClientRect();
-  const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-  const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-  ctx.lineWidth = 2;
-  ctx.lineCap = 'round';
-  ctx.lineTo(x, y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x, y);
+// Print
+function printReport(){
+window.print();
 }
 
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('mousemove', draw);
-canvas.addEventListener('touchstart', startDraw);
-canvas.addEventListener('touchend', endDraw);
-canvas.addEventListener('touchmove', draw);
+// Damage map
+let damageMapCurrent='D';
 
-function clearSignature() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+function damageMapSet(type){
+damageMapCurrent=type;
 }
 
-// -------- Email --------
-function sendEmail() {
-  const date = document.getElementById('date').value;
-  const brand = document.getElementById('brand').value;
-  const model = document.getElementById('model').value;
-  const reg = document.getElementById('registration').value;
-  const colour = document.getElementById('colour').value;
-  const mileage = document.getElementById('mileage').value;
-  const source = document.getElementById('source').value;
-  const keys = document.getElementById('keys').value;
-  const tracker = document.getElementById('tracker').value;
-  const notes = document.getElementById('notes').value;
-  const appraiser = document.getElementById('appraiser').value;
-  const total = document.getElementById('total').innerText;
+function damageMapPlace(e){
+const container=document.getElementById('damageMapContainer');
+const rect=container.getBoundingClientRect();
+const x=((e.clientX-rect.left)/rect.width)*100;
+const y=((e.clientY-rect.top)/rect.height)*100;
 
-  let damageSection = "";
-  for (let i = 1; i <= 6; i++) {
-    const d = document.getElementById('damage' + i).value;
-    const c = document.getElementById('cost' + i).value;
-    if (d || c) {
-      damageSection += d + " - £" + (c || 0) + "%0D%0A";
-    }
-  }
+const mark=document.createElement('div');
+mark.innerText=damageMapCurrent;
+mark.style.position='absolute';
+mark.style.left=x+'%';
+mark.style.top=y+'%';
+mark.style.transform='translate(-50%,-50%)';
+mark.style.width='22px';
+mark.style.height='22px';
+mark.style.borderRadius='50%';
+mark.style.display='flex';
+mark.style.alignItems='center';
+mark.style.justifyContent='center';
+mark.style.fontSize='12px';
+mark.style.fontWeight='bold';
+mark.style.color='white';
 
-  const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
+if(damageMapCurrent==='C')mark.style.background='green';
+else if(damageMapCurrent==='D')mark.style.background='red';
+else if(damageMapCurrent==='S')mark.style.background='orange';
+else if(damageMapCurrent==='W')mark.style.background='blue';
+else if(damageMapCurrent==='R')mark.style.background='purple';
 
-  const body =
-    "VEHICLE INFORMATION" + "%0D%0A" +
-    "Date: " + date + "%0D%0A" +
-    "Brand: " + brand + "%0D%0A" +
-    "Model: " + model + "%0D%0A" +
-    "Registration: " + reg + "%0D%0A" +
-    "Colour: " + colour + "%0D%0A" +
-    "Mileage: " + mileage + "%0D%0A" +
-    "Source: " + source + "%0D%0A" +
-    "Keys: " + keys + "%0D%0A" +
-    "Tracker: " + tracker + "%0D%0A%0D%0A" +
-    "DAMAGE BREAKDOWN" + "%0D%0A" +
-    damageSection + "%0D%0A" +
-    "TOTAL ESTIMATED COST: £" + total + "%0D%0A%0D%0A" +
-    "NOTES:" + "%0D%0A" + notes + "%0D%0A%0D%0A" +
-    "Signed by: " + appraiser;
-
-  window.location.href = "mailto:?subject=" + subject + "&body=" + body;
-
-  setTimeout(resetForm, 500);
+container.appendChild(mark);
 }
 
-function printReport() {
-  window.print();
-}
-// ===== SAFE BODY DAMAGE MAP SYSTEM =====
-
-let damageMapCurrent = 'D';
-
-function damageMapSet(type) {
-  damageMapCurrent = type;
+function damageMapClear(){
+document.querySelectorAll('#damageMapContainer div')
+.forEach(el=>el.remove());
 }
 
-function damageMapPlace(e) {
-  try {
-    const container = document.getElementById('damageMapContainer');
-    const rect = container.getBoundingClientRect();
-
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-    const mark = document.createElement('div');
-    mark.innerText = damageMapCurrent;
-
-    mark.style.position = 'absolute';
-    mark.style.left = x + '%';
-    mark.style.top = y + '%';
-    mark.style.transform = 'translate(-50%, -50%)';
-    mark.style.width = '22px';
-    mark.style.height = '22px';
-    mark.style.borderRadius = '50%';
-    mark.style.display = 'flex';
-    mark.style.alignItems = 'center';
-    mark.style.justifyContent = 'center';
-    mark.style.fontSize = '12px';
-    mark.style.fontWeight = 'bold';
-    mark.style.color = 'white';
-
-    // 🎨 Barvy podle typu
-    if (damageMapCurrent === 'C') mark.style.background = 'green';
-    else if (damageMapCurrent === 'D') mark.style.background = 'red';
-    else if (damageMapCurrent === 'S') mark.style.background = 'orange';
-    else if (damageMapCurrent === 'W') mark.style.background = 'blue';
-    else if (damageMapCurrent === 'R') mark.style.background = 'purple';
-
-    container.appendChild(mark);
-
-  } catch (err) {
-    console.log("Damage map error:", err);
-  }
- }
-  function damageMapClear() {
-  const container = document.getElementById('damageMapContainer');
-  container.querySelectorAll('div').forEach(mark => mark.remove());
-}
 </script>
 
 </body>
