@@ -296,7 +296,62 @@ function damageMapClear(){
 document.querySelectorAll('#damageMapContainer div')
 .forEach(el=>el.remove());
 }
+function sendEmail() {
 
+  const date = document.getElementById('date').value;
+  const brand = document.getElementById('brand').value;
+  const model = document.getElementById('model').value;
+  const reg = document.getElementById('registration').value;
+  const colour = document.getElementById('colour').value;
+  const mileage = document.getElementById('mileage').value;
+  const source = document.getElementById('source').value;
+  const keys = document.getElementById('keys').value;
+  const tracker = document.getElementById('tracker').value;
+  const notes = document.getElementById('notes').value;
+  const appraiser = document.getElementById('appraiser').value;
+  const total = document.getElementById('total').innerText;
+
+  let damageSection = "";
+  for (let i = 1; i <= 6; i++) {
+    const d = document.getElementById('damage' + i).value;
+    const c = document.getElementById('cost' + i).value;
+    if (d || c) {
+      damageSection += d + " - £" + (c || 0) + "\n";
+    }
+  }
+
+  const subject = Appraisal Report - ${brand} ${model} (${reg});
+
+  const body = `
+VEHICLE INFORMATION
+
+Date: ${date}
+Brand: ${brand}
+Model: ${model}
+Registration: ${reg}
+Colour: ${colour}
+Mileage: ${mileage}
+Source: ${source}
+Keys: ${keys}
+Tracker: ${tracker}
+
+DAMAGE BREAKDOWN
+${damageSection}
+
+TOTAL ESTIMATED COST: £${total}
+
+NOTES:
+${notes}
+
+Signed by: ${appraiser}
+`;
+
+  const mailtoLink =
+    "mailto:?subject=" + encodeURIComponent(subject) +
+    "&body=" + encodeURIComponent(body);
+
+  window.location.href = mailtoLink;
+}
 </script>
 
 </body>
