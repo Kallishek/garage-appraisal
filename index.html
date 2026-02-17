@@ -14,31 +14,15 @@
     .total { font-size:20px; font-weight:bold; margin-top:10px; }
     .section { margin-top:25px; }
     canvas { border:1px solid #ccc; border-radius:10px; width:100%; height:120px; touch-action:none; }
-    @media print {
-      button { display:none; }
-      body { background:white; }
-      .card { box-shadow:none; }
-    }
-    .header-logos {
-  text-align: center;
-  margin-bottom: 15px;
-}
-
-.header-logos img {
-  max-width: 100%;
-  height: auto;
-}
-
-@media print {
-  .header-logos {
-    margin-bottom: 10px;
-  }
-}  
-  @media print {
+ @media print {
 
   @page {
     size: A4;
     margin: 15mm;
+  }
+
+  button {
+    display: none;
   }
 
   body {
@@ -48,6 +32,10 @@
   .card {
     box-shadow: none;
     padding: 0;
+  }
+
+  .header-logos {
+    margin-bottom: 10px;
   }
 
   /* ===== Vehicle Info 2 sloupce ===== */
@@ -61,12 +49,17 @@
     margin: 4px 0;
   }
 
-  /* ===== Page break control ===== */
+  /* ===== zabrání rozsekání sekcí ===== */
+  .section {
+    page-break-inside: avoid;
+  }
+
+  /* ===== Page break ===== */
   .page-break {
     page-break-before: always;
   }
 
-  /* ===== Map + Damage side by side ===== */
+  /* ===== Map + Damage vedle sebe ===== */
   .print-flex {
     display: flex;
     gap: 20px;
@@ -75,6 +68,8 @@
 
   .print-flex > div {
     flex: 1;
+  }
+
   }
 }  
   </style>
