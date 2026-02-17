@@ -221,39 +221,38 @@ function damageMapSet(type) {
 }
 
 function damageMapPlace(e) {
-  try {
-    const container = document.getElementById('damageMapContainer');
-    const rect = container.getBoundingClientRect();
+  const container = document.getElementById('damageMapContainer');
+  const rect = container.getBoundingClientRect();
 
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+  const x = ((e.clientX - rect.left) / rect.width) * 100;
+  const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    let color = 'red';
+  const mark = document.createElement('div');
+  mark.innerText = damageMapCurrent;
 
-    if (damageMapCurrent === 'D') color = '#e53935';   // red
-    if (damageMapCurrent === 'C') color = '#43a047';   // green
-    if (damageMapCurrent === 'S') color = '#fdd835';   // yellow
-    if (damageMapCurrent === 'W') color = '#1e88e5';   // blue
-    if (damageMapCurrent === 'R') color = '#fb8c00';   // orange
+  mark.style.position = 'absolute';
+  mark.style.left = x + '%';
+  mark.style.top = y + '%';
+  mark.style.transform = 'translate(-50%, -50%)';
+  mark.style.width = '22px';
+  mark.style.height = '22px';
+  mark.style.borderRadius = '50%';
+  mark.style.display = 'flex';
+  mark.style.alignItems = 'center';
+  mark.style.justifyContent = 'center';
+  mark.style.fontSize = '12px';
+  mark.style.fontWeight = 'bold';
+  mark.style.color = 'white';
 
-    const mark = document.createElement('div');
-    mark.innerText = damageMapCurrent;
-    mark.style.position = 'absolute';
-    mark.style.left = x + 'px';
-    mark.style.top = y + 'px';
-    mark.style.transform = 'translate(-50%, -50%)';
-    mark.style.background = color;
-    mark.style.color = 'white';
-    mark.style.borderRadius = '50%';
-    mark.style.width = '22px';
-    mark.style.height = '22px';
-    mark.style.display = 'flex';
-    mark.style.alignItems = 'center';
-    mark.style.justifyContent = 'center';
-    mark.style.fontSize = '12px';
-    mark.style.fontWeight = 'bold';
+  // 🎨 barvy podle typu
+  if (damageMapCurrent === 'C') mark.style.background = 'green';
+  else if (damageMapCurrent === 'D') mark.style.background = 'red';
+  else if (damageMapCurrent === 'S') mark.style.background = 'orange';
+  else if (damageMapCurrent === 'W') mark.style.background = 'blue';
+  else if (damageMapCurrent === 'R') mark.style.background = 'purple';
 
-    container.appendChild(mark);
+  container.appendChild(mark);
+}
   } catch (err) {
     console.log("Damage map error:", err);
   }
