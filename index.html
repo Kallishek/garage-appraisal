@@ -19,13 +19,32 @@
       body { background:white; }
       .card { box-shadow:none; }
     }
+    .header-logos {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.header-logos img {
+  max-width: 100%;
+  height: auto;
+}
+
+@media print {
+  .header-logos {
+    margin-bottom: 10px;
+  }
+}  
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h1>Vehicle Appraisal form</h1>
 
+  <div class="header-logos">
+    <img src="Unknown-2.jpg" alt="Company Logos">
+  </div>
+
+  <h1>Vehicle Appraisal form</h1>
   <div class="section">
     <h2>Vehicle Info</h2>
     <input id="date" type="date">
