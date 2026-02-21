@@ -255,16 +255,17 @@ h2:has(+ #appraiser) {
 <div class="field">
 <label class="print-label">Tracker Number</label>
 <input id="tracker" placeholder="Tracker Number">
-</div>
-<div class="field">
-  <label>Status</label>
-  <div class="status-buttons">
-    <button type="button" onclick="toggleStatus(this)">S/C</button>
-    <button type="button" onclick="toggleStatus(this)">MOT</button>
-    <button type="button" onclick="toggleStatus(this)">AUC</button>
-  </div>
+ </div>
 </div>
 
+<div class="compact-status">
+  <div class="status-options">
+    <div class="status-btn" onclick="toggleStatus(this)">S/C</div>
+    <div class="status-btn" onclick="toggleStatus(this)">MOT</div>
+    <div class="status-btn" onclick="toggleStatus(this)">AUC</div>
+  </div>
+</div>
+  
 <div class="section">
 <h2>Body Damage Map</h2>
 
