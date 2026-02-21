@@ -104,7 +104,17 @@ canvas {
 .field {
   display: flex;
   flex-direction: column;
-}  
+} 
+
+.header-print {
+  display: block;
+}
+
+.logo-print img {
+  width: 100%;
+  max-width: 500px;
+}
+  
   /* ===== PRINT MODE ===== */
 @media print {
 
@@ -149,16 +159,37 @@ canvas {
   display: block;
 }
 
+.header-print {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.logo-print img {
+  max-width: 280px;   /* 🔥 zmenšení loga */
+}
+
+.date-print {
+  font-size: 14px;
+  font-weight: bold;
+}  
+
 </style>
 </head>
 <body>
 
 <div class="card">
 
-<div class="header-logos">
-  <img src="Unknown-2.jpg" alt="Company Logos">
+<div class="header-print">
+  <div class="logo-print">
+    <img src="Unknown-2.jpg" alt="Company Logos">
+  </div>
+  <div class="date-print">
+    <span id="printDate"></span>
+  </div>
 </div>
-
+  
 <h1>Vehicle Appraisal form</h1>
 
 <div class="section">
@@ -265,6 +296,8 @@ canvas {
 </div>
 
 <script>
+
+document.getElementById('printDate').innerText = today;
 
 let selectedStatuses = [];  
   
@@ -480,6 +513,7 @@ function damageMapPlace(e) {
   }
 
 }
+  
 </script>
 
 </body>
