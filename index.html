@@ -297,13 +297,13 @@ canvas {
 
 <script>
 
-document.getElementById('printDate').innerText = today;
-
 let selectedStatuses = [];  
   
 // Auto date
 const today = new Date().toISOString().split('T')[0];
 document.getElementById('date').value = today;
+
+document.getElementById('printDate').innerText = today;
 
 // Damage rows
 const container = document.getElementById('damageContainer');
