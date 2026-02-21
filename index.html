@@ -95,25 +95,6 @@ canvas {
   max-width: 500px;
 }
 
-  .status-buttons {
-  display: flex;
-  gap: 8px;
-}
-
-.status-buttons button {
-  padding: 6px 12px;
-  border-radius: 20px;
-  border: 1px solid black;
-  background: white;
-  color: black;
-  font-size: 14px;
-}
-
-.status-buttons button.active {
-  background: black;
-  color: white;
-}  
- 
   /* ===== PRINT MODE ===== */
 @media print {
 
@@ -258,14 +239,6 @@ h2:has(+ #appraiser) {
  </div>
 </div>
 
-<div class="compact-status">
-  <div class="status-options">
-    <div class="status-btn" onclick="toggleStatus(this)">S/C</div>
-    <div class="status-btn" onclick="toggleStatus(this)">MOT</div>
-    <div class="status-btn" onclick="toggleStatus(this)">AUC</div>
-  </div>
-</div>
-  
 <div class="section">
 <h2>Body Damage Map</h2>
 
