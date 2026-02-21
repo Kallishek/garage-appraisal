@@ -125,8 +125,8 @@ canvas {
 
 <div class="vehicle-grid">
 <input id="date" type="date">
-<input id="brand" placeholder="Brand">
 <input id="model" placeholder="Model">
+<input id="vin" placeholder="VIN Number">
 <input id="registration" placeholder="Registration"
        style="text-transform:uppercase"
        oninput="this.value=this.value.toUpperCase()">
@@ -299,8 +299,8 @@ document.querySelectorAll('#damageMapContainer div')
 // -------- Email --------
 function sendEmail() {
   const date = document.getElementById('date').value;
-  const brand = document.getElementById('brand').value;
   const model = document.getElementById('model').value;
+  const vin = document.getElementById('vin').value;
   const reg = document.getElementById('registration').value;
   const colour = document.getElementById('colour').value;
   const mileage = document.getElementById('mileage').value;
@@ -320,13 +320,13 @@ function sendEmail() {
     }
   }
 
-  const subject = "Appraisal Report - " + brand + " " + model + " (" + reg + ")";
+  const subject = "Appraisal Report - " + model + " (" + reg + ")";
 
   const body =
     "VEHICLE INFORMATION" + "%0D%0A" +
     "Date: " + date + "%0D%0A" +
-    "Brand: " + brand + "%0D%0A" +
     "Model: " + model + "%0D%0A" +
+    "VIN: " + vin + "%0D%0A" +
     "Registration: " + reg + "%0D%0A" +
     "Colour: " + colour + "%0D%0A" +
     "Mileage: " + mileage + "%0D%0A" +
