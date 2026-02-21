@@ -98,59 +98,62 @@ canvas {
   /* ===== PRINT MODE ===== */
 @media print {
 
- /* ===== FORCE 1 PAGE CLEAN LAYOUT ===== */
+/* ===== AGGRESSIVE ONE PAGE PRINT ===== */
 
 @page {
   size: A4;
-  margin: 10mm;
+  margin: 6mm;
 }
 
 body {
-  font-size: 11px;
+  font-size: 10px;
 }
 
 h1 {
-  font-size: 18px;
-  margin-bottom: 6px;
-}
-
-h2 {
-  font-size: 13px;
-  margin-top: 10px;
-  margin-bottom: 4px;
-}
-
-.card {
-  padding: 10px;
-  box-shadow: none;
-}
-
-.section {
-  margin-top: 12px;
-}
-
-input, textarea {
-  padding: 5px;
-  font-size: 11px;
+  font-size: 16px;
   margin: 4px 0;
 }
 
+h2 {
+  font-size: 12px;
+  margin: 6px 0 3px 0;
+}
+
+.card {
+  padding: 6px;
+}
+
+.section {
+  margin-top: 6px;
+}
+
+input, textarea {
+  padding: 4px;
+  font-size: 10px;
+  margin: 2px 0;
+}
+
 .vehicle-grid {
-  gap: 6px;
+  gap: 4px;
 }
 
 canvas {
-  height: 90px;
+  height: 70px;
 }
 
 .total {
-  font-size: 14px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.header-logos img {
+  max-height: 35px;
 }
 
 button {
   display: none;
 }  
-  
+ 
   @page {
     size: A4;
     margin: 15mm;
