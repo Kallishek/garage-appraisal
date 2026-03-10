@@ -209,6 +209,8 @@ button {
 .date-print {
   font-size: 14px;
   font-weight: bold;
+  display:flex;
+  gap:20px;
 }  
 
 .print-notes-signature {
@@ -248,6 +250,7 @@ h2:has(+ #appraiser) {
     <img src="Unknown-2.jpg" alt="Company Logos">
   </div>
   <div class="date-print">
+    <span id="printReg"></span>
     <span id="printDate"></span>
   </div>
 </div>
@@ -567,7 +570,15 @@ function damageMapPlace(e) {
   }
 
 }
-  
+  // ===== PRINT REGISTRATION =====
+
+function updatePrintReg(){
+  const reg = document.getElementById("registration").value;
+  document.getElementById("printReg").innerText = reg;
+}
+
+document.getElementById("registration").addEventListener("input", updatePrintReg);  
+
 </script>
 
 </body>
