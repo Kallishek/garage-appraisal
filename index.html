@@ -349,6 +349,7 @@ h2:has(+ #appraiser) {
 
 <button onclick="sendEmail()">Send Email Report</button>
 <button onclick="printReport()">Print Report</button>
+<button onclick="newCar()">New Car</button>
 
 </div>
 
@@ -579,6 +580,48 @@ function updatePrintReg(){
 
 document.getElementById("registration").addEventListener("input", updatePrintReg);  
 
+function newCar(){
+
+  // vymazání polí
+  document.getElementById("model").value="";
+  document.getElementById("vin").value="";
+  document.getElementById("registration").value="";
+  document.getElementById("colour").value="";
+  document.getElementById("mileage").value="";
+  document.getElementById("source").value="";
+  document.getElementById("keys").value="";
+  document.getElementById("tracker").value="";
+  document.getElementById("notes").value="";
+  document.getElementById("appraiser").value="";
+
+  // damage items
+  for(let i=1;i<=6;i++){
+    document.getElementById("damage"+i).value="";
+    document.getElementById("cost"+i).value="";
+  }
+
+  // reset total
+  document.getElementById("total").innerText="0.00";
+
+  // clear signature
+  clearSignature();
+
+  // clear damage map
+  damageMapClear();
+
+  // reset status
+  selectedStatuses=[];
+  document.querySelectorAll('.status-btn').forEach(btn=>{
+    btn.classList.remove('active');
+  });
+
+  // dnešní datum
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date').value = today;
+
+  updatePrintReg();
+
+}
 </script>
 
 </body>
